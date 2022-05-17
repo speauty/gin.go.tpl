@@ -30,7 +30,6 @@ func (app App) setGin() {
 
 func (app App) Run() {
 	app.setGin()
-
 	err := app.Server.NewServer().ListenAndServe()
 	if err != nil {
 		panic(err)

@@ -12,6 +12,9 @@ type Context struct {
 func (ctx Context) Wrap(handler func(*Context) *http.Response) gin.HandlerFunc {
 	return func(gCtx *gin.Context) {
 		response := handler(&Context{Context: gCtx})
+		if response == nil {
+			response = response.Default()
+		}
 		gCtx.JSON(200, response)
 	}
 }
