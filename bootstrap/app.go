@@ -2,26 +2,16 @@ package bootstrap
 
 import (
 	"gin.go.tpl/lib"
-	"gin.go.tpl/lib/inject"
+	libConfig "gin.go.tpl/lib/config"
 	"github.com/gin-gonic/gin"
 )
 
 func init() {
-	app := &App{}
-	server := &Server{}
-
-	container := &lib.Container{}
-	err := container.Register(
-		&inject.Object{Value: server},
-		&inject.Object{Value: app},
-	)
-	if err != nil {
-		panic(err)
-	}
 }
 
 type App struct {
-	Server Server `inject:"inline"`
+	Server Server
+	Config libConfig.Config
 }
 
 func (app App) setGin() {
@@ -30,6 +20,9 @@ func (app App) setGin() {
 
 func (app App) Run() {
 	app.setGin()
+	// 上下文初始化
+	lib.NewContextAPI().Init("./")
+
 	err := app.Server.NewServer().ListenAndServe()
 	if err != nil {
 		panic(err)
