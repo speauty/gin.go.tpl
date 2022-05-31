@@ -8,8 +8,8 @@ import (
 
 type Router struct{}
 
-func (r Router) GetRouters() *gin.Engine {
-	router := gin.Default()
-	router.GET("/ping", lib.NewContextAPI().Wrap(controller.Index{}.Get))
+func (r Router) GetRouters(ctx *lib.Context, engine *gin.Engine) *gin.Engine {
+	router := engine
+	router.GET("/ping", ctx.Wrap(controller.Index{}.Get))
 	return router
 }

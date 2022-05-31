@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	"gin.go.tpl/lib"
-	libConfig "gin.go.tpl/lib/config"
+	"gin.go.tpl/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,21 +10,31 @@ func init() {
 }
 
 type App struct {
-	Server Server
-	Config libConfig.Config
+	Engine  *gin.Engine
+	Context *lib.Context
+	Server  Server
 }
 
-func (app App) setGin() {
-	gin.SetMode(gin.ReleaseMode)
+func (app *App) setGin() {
+	app.Engine = gin.Default()
+
+	// setMode by config from ini
+	if app.Context.Config.Gin.Mode != "" {
+		gin.SetMode(app.Context.Config.Gin.Mode)
+	}
 }
 
-func (app App) Run() {
-	app.setGin()
-	// 上下文初始化
+func (app *App) setMiddleware() {
+	app.Engine.Use(middleware.CorsMiddleware{}.SetHeaders())
+}
+
+func (app *App) Run() {
+	// to initialize context
 	lib.NewContextAPI().Init("./")
 
-	err := app.Server.NewServer().ListenAndServe()
-	if err != nil {
-		panic(err)
-	}
+	app.Context = lib.NewContextAPI()
+	app.setGin()
+	app.setMiddleware()
+
+	app.Server.StartServer(app.Context, app.Server.NewServer(app.Context, app.Engine))
 }
