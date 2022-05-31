@@ -7,8 +7,7 @@ import (
 )
 
 type GlobalConf struct {
-	ENV      string `mapstructure:"env"`
-	DBDriver string `mapstructure:"db_driver"`
+	ENV string `mapstructure:"env"`
 }
 
 type GinConf struct {
@@ -47,8 +46,24 @@ type SSLConf struct {
 	CertificateKey string `mapstructure:"certificate_key"`
 }
 
+type DatabaseConf struct {
+	DBDriver               string    `mapstructure:"db_driver"`
+	IsPool                 int       `mapstructure:"is_pool"`
+	MaxIdleConn            int       `mapstructure:"max_idle_conn"`
+	MaxOpenConn            int       `mapstructure:"max_open_conn"`
+	MaxLifetime            uint      `mapstructure:"max_lifetime"`
+	SkipDefaultTransaction bool      `mapstructure:"skip_default_transaction"`
+	PrepareStmt            bool      `mapstructure:"prepare_stmt"`
+	PgSql                  PgSqlConf `mapstructure:"pgsql"`
+	MySql                  MySqlConf `mapstructure:"mysql"`
+}
+
 type PgSqlConf struct {
-	Source string `mapstructure:"source"`
+	DSN string `mapstructure:"dsn"`
+}
+
+type MySqlConf struct {
+	DSN string `mapstructure:"dsn"`
 }
 
 type RedisConf struct {
@@ -61,12 +76,14 @@ type RedisConf struct {
 }
 
 type Config struct {
-	Global GlobalConf `mapstructure:"global"`
-	Gin    GinConf    `mapstructure:"gin"`
-	Log    LogConf    `mapstructure:"log"`
-	Server ServerConf `mapstructure:"server"`
-	PgSql  PgSqlConf  `mapstructure:"pgsql"`
-	Redis  RedisConf  `mapstructure:"redis"`
+	Global   GlobalConf   `mapstructure:"global"`
+	Gin      GinConf      `mapstructure:"gin"`
+	Log      LogConf      `mapstructure:"log"`
+	Server   ServerConf   `mapstructure:"server"`
+	Database DatabaseConf `mapstructure:"database"`
+	PgSql    PgSqlConf    `mapstructure:"pgsql"`
+	MySql    MySqlConf    `mapstructure:"mysql"`
+	Redis    RedisConf    `mapstructure:"redis"`
 }
 
 func (Config) LoadConfig(path string) (config Config, err error) {
