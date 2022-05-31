@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"context"
+	"gin.go.tpl/lib/config"
 	"github.com/gomodule/redigo/redis"
 	"sync"
 )
@@ -12,15 +12,13 @@ var (
 )
 
 type Cache struct {
-	bg   *context.Context
-	Pool *redis.Pool
+	config config.RedisConf
+	Pool   *redis.Pool
 }
 
-func NewCacheAPI(bg context.Context) *Cache {
+func NewCacheAPI(config config.RedisConf) *Cache {
 	CacheOnce.Do(func() {
-		CacheAPI = &Cache{
-			bg: &bg,
-		}
+		CacheAPI = &Cache{config: config}
 	})
 	return CacheAPI
 }
@@ -28,14 +26,20 @@ func NewCacheAPI(bg context.Context) *Cache {
 func (c *Cache) initPool() {
 	if c.Pool == nil {
 		c.Pool = &redis.Pool{
-			MaxIdle:   10, /*最大的空闲连接数*/
-			MaxActive: 10, /*最大的激活连接数*/
+			MaxIdle:   c.config.MaxIdle,
+			MaxActive: c.config.MaxActive,
 			Dial: func() (redis.Conn, error) {
-				//c, err := redis.Dial("tcp", c.Conf.Host+":"+c.Conf.Port, redis.DialPassword(c.Conf.Auth))
-				//if err != nil {
-				//	return nil, err
-				//}
-				return nil, nil
+				conn, err := redis.Dial(
+					"tcp", c.config.Host+":"+c.config.Port,
+					redis.DialPassword(c.config.Auth),
+				)
+				if err != nil {
+					return nil, err
+				}
+				if c.config.DB != "" {
+					_, _ = conn.Do("select", c.config.DB)
+				}
+				return conn, nil
 			},
 		}
 	}
