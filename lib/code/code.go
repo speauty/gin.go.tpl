@@ -11,7 +11,7 @@ const (
 
 var codeMsg = map[Code]string{
 	StdOk:  "请求成功",
-	StdErr: "当前服务异常, 请稍后请求",
+	StdErr: "当前服务异常, 请稍后重新尝试",
 }
 
 func (code Code) GetMsg() string {
