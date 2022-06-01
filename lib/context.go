@@ -7,6 +7,7 @@ import (
 	"gin.go.tpl/lib/http"
 	"gin.go.tpl/lib/log"
 	"github.com/gin-gonic/gin"
+	netHttp "net/http"
 	"sync"
 )
 
@@ -36,7 +37,6 @@ func (ctx *Context) Init(iniDir string) {
 	ctx.Log = log.NewLogAPI(ctx.Config.Log)
 	ctx.Config.Database.MySql = ctx.Config.MySql
 	//@todo the MySql or PgSql config can't load at database node with viper, so using set
-	ctx.Log.Info(ctx.Config.Database)
 	ctx.DB = db.NewDBAPI(ctx.Config.Database)
 	ctx.Cache = cache.NewCacheAPI(ctx.Config.Redis)
 }
@@ -47,6 +47,6 @@ func (ctx *Context) Wrap(handler func(*Context) *http.Response) gin.HandlerFunc 
 		if response == nil {
 			response = response.Default()
 		}
-		gCtx.JSON(200, response)
+		gCtx.JSON(netHttp.StatusOK, response)
 	}
 }

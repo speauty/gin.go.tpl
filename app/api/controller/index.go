@@ -1,8 +1,9 @@
 package controller
 
 import (
+	"gin.go.tpl/db/entity"
+	"gin.go.tpl/db/migration"
 	"gin.go.tpl/lib"
-	"gin.go.tpl/lib/db"
 	"gin.go.tpl/lib/http"
 )
 
@@ -17,9 +18,9 @@ type GetInput struct {
 func (c Index) Get(ctx *lib.Context) *http.Response {
 	inputs := &GetInput{}
 	err := ctx.ShouldBind(inputs)
-	ctx.Log.Warn("Hello")
-	sqlDb, _ := db.DBAPI.GetDB().DB()
-	ctx.Log.Info(sqlDb.Stats())
+	migrate := &migration.Migration{}
+	migrate.AddModel(entity.User{})
+	migrate.Exec()
 	if err != nil {
 		return c.Response(nil, err)
 	}

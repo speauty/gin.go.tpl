@@ -1,5 +1,10 @@
 package entity
 
+import "gin.go.tpl/db"
+
 type User struct {
-	Id int64 `gorm:"type:int8;"`
+	Id            int64  `gorm:"<-:create type:int8;comment:'主键'"`
+	Nickname      string `gorm:"type:varchar(64);comment:'昵称'"`
+	Passwd        string `gorm:"type:varchar(32);comment:'密码'"`
+	db.TimeModule `gorm:"embedded"`
 }

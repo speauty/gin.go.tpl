@@ -34,7 +34,10 @@ func (d *DB) Init() {
 	d.setPool()
 }
 
-func (d DB) GetDB() *gorm.DB {
+func (d *DB) GetDB() *gorm.DB {
+	if d.currentDB == nil {
+		d.Init()
+	}
 	return d.currentDB
 }
 
