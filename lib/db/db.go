@@ -6,6 +6,7 @@ import (
 	"gin.go.tpl/lib/db/client"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"gorm.io/gorm/schema"
 	"sync"
 	"time"
 )
@@ -69,7 +70,6 @@ func (d DB) setPool() {
 		sqlDB.SetMaxIdleConns(d.Config.MaxIdleConn)
 		sqlDB.SetMaxOpenConns(d.Config.MaxOpenConn)
 		sqlDB.SetConnMaxLifetime(time.Duration(d.Config.MaxLifetime))
-		_ = sqlDB.Close()
 	}
 }
 
@@ -79,6 +79,12 @@ func (d DB) getOption() *gorm.Config {
 	gormConfig.SkipDefaultTransaction = d.Config.SkipDefaultTransaction
 	// to set a logger for gorm
 	gormConfig.Logger = logger.Default.LogMode(logger.Warn)
+
+	gormConfig.NamingStrategy = schema.NamingStrategy{
+		TablePrefix:   d.Config.PrefixTable,
+		SingularTable: d.Config.SingularTable,
+		NoLowerCase:   d.Config.NoLowerCase,
+	}
 
 	return gormConfig
 }

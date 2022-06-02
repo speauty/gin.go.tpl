@@ -1,10 +1,9 @@
 package controller
 
 import (
-	"gin.go.tpl/db/entity"
-	"gin.go.tpl/db/migration"
 	"gin.go.tpl/lib"
 	"gin.go.tpl/lib/http"
+	"gin.go.tpl/service"
 )
 
 type Index struct {
@@ -18,9 +17,7 @@ type GetInput struct {
 func (c Index) Get(ctx *lib.Context) *http.Response {
 	inputs := &GetInput{}
 	err := ctx.ShouldBind(inputs)
-	migrate := &migration.Migration{}
-	migrate.AddModel(entity.User{})
-	migrate.Exec()
+	service.MigratorService{}.SyncTables(ctx)
 	if err != nil {
 		return c.Response(nil, err)
 	}

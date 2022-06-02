@@ -48,6 +48,9 @@ type SSLConf struct {
 
 type DatabaseConf struct {
 	DBDriver               string    `mapstructure:"db_driver"`
+	PrefixTable            string    `mapstructure:"prefix_table"`
+	SingularTable          bool      `mapstructure:"singular_table"`
+	NoLowerCase            bool      `mapstructure:"no_lower_case"`
 	IsPool                 int       `mapstructure:"is_pool"`
 	MaxIdleConn            int       `mapstructure:"max_idle_conn"`
 	MaxOpenConn            int       `mapstructure:"max_open_conn"`
