@@ -3,7 +3,6 @@ package bootstrap
 import (
 	"gin.go.tpl/lib"
 	"gin.go.tpl/lib/constant"
-	"gin.go.tpl/lib/log"
 	"gin.go.tpl/middleware"
 	"gin.go.tpl/service"
 	"github.com/gin-gonic/gin"
@@ -20,8 +19,6 @@ type App struct {
 
 func (app *App) setGin() {
 	app.Engine = gin.Default()
-
-	app.Context.Log = log.LogAPI
 
 	// setMode by config from ini
 	if app.Context.Config.Gin.Mode != "" {
