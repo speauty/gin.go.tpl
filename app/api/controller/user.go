@@ -9,7 +9,7 @@ import (
 )
 
 type User struct {
-	*Base
+	Base
 }
 
 type userRegisterInput struct {

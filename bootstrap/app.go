@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"gin.go.tpl/lib"
+	"gin.go.tpl/lib/constant"
 	"gin.go.tpl/lib/log"
 	"gin.go.tpl/middleware"
 	"gin.go.tpl/service"
@@ -29,19 +30,23 @@ func (app *App) setGin() {
 }
 
 func (app *App) setMiddleware() {
-	app.Engine.Use(
-		middleware.LogMiddleware{}.GoThrough(), middleware.CorsMiddleware{}.SetHeaders(),
-	)
+	app.Engine.Use(middleware.RecoverMiddleware{}.Broken())
+	// 非发布模式, 使用日志中间件
+	if app.Context.Config.Gin.Mode != constant.GinModeRelease {
+		app.Engine.Use(middleware.LogMiddleware{}.GoThrough())
+	}
+	app.Engine.Use(middleware.CorsMiddleware{}.SetHeaders())
 }
 
 func (app *App) Run() {
-	// to initialize context
+	// 初始化上下文
 	lib.NewContextAPI().Init("./")
 
 	app.Context = lib.NewContextAPI()
 	app.setGin()
 	app.setMiddleware()
 
+	// 执行数据库迁移
 	err := service.MigratorService{}.SyncTables(app.Context)
 	if err != nil {
 		panic(err)

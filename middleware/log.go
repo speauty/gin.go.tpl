@@ -10,9 +10,10 @@ type LogMiddleware struct{}
 
 func (lm LogMiddleware) GoThrough() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		rawData, _ := c.GetRawData()
 		log.LogAPI.GetLogger().WithFields(logrus.Fields{
-			"url": c.Request.RequestURI, "method": c.Request.Method, "client_ip": c.ClientIP(), "raw_data": string(rawData),
+			"url": c.Request.RequestURI, "method": c.Request.Method,
+			"client": c.ClientIP(), "user-agent": c.Request.UserAgent(),
+			"referer": c.Request.Referer(), "host": c.Request.Host,
 		}).Info("access.log")
 		c.Next()
 	}
