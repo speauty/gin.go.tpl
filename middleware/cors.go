@@ -11,6 +11,8 @@ func (cm CorsMiddleware) SetHeaders() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.Request.Header.Get("Origin") != "" {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", c.Request.Header.Get("Origin"))
+		} else {
+			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		}
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		if c.Request.Header.Get("Access-Control-Request-Headers") != "" {
@@ -19,8 +21,8 @@ func (cm CorsMiddleware) SetHeaders() gin.HandlerFunc {
 
 		// to terminate request about option directly
 		if c.Request.Method == http.MethodOptions {
-			c.Writer.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, DELETE, POST, PUT")
-			c.Writer.Header().Set("Allow", "OPTIONS, GET, DELETE, POST, PUT")
+			c.Writer.Header().Set("Access-Control-Allow-Methods", "OPTIONS, GET, POST")
+			c.Writer.Header().Set("Allow", "OPTIONS, GET, POST")
 			c.Writer.Header().Set("Cache-Control", "max-age=604800")
 			c.Writer.Header().Set("Content-Length", "0")
 			c.AbortWithStatus(http.StatusOK)
