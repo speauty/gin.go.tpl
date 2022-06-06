@@ -15,8 +15,11 @@ type GinConf struct {
 }
 
 type LogConf struct {
-	Level   uint32 `mapstructure:"level"`
-	LogFile string `mapstructure:"log_file"`
+	Level            uint32 `mapstructure:"level"`
+	LogFile          string `mapstructure:"log_file"`
+	LogRotationTime  int    `mapstructure:"log_rotation_time"`
+	LogMaxAge        int    `mapstructure:"log_max_age"`
+	LogRotationCount uint   `mapstructure:"log_rotation_count"`
 }
 
 type ServerConf struct {

@@ -3,9 +3,10 @@ package log
 import (
 	"gin.go.tpl/lib/config"
 	"gin.go.tpl/lib/constant"
+	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/sirupsen/logrus"
-	"os"
 	"sync"
+	"time"
 )
 
 var (
@@ -38,14 +39,28 @@ func (l Log) SetLogrus() {
 		TimestampFormat: constant.DefaultTimestampFormat, DisableColors: false,
 		ForceColors: true, FullTimestamp: true})
 	if l.Conf.LogFile != "" { // 如果日志文件非空, 将日志打到对应文件
-		file, err := os.OpenFile(l.Conf.LogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-		if err == nil {
-			// 如果输出到文件, 将格式设置为json
-			l.logger.SetFormatter(&logrus.JSONFormatter{TimestampFormat: constant.DefaultTimestampFormat})
-			l.logger.SetOutput(file)
+		var fd *rotatelogs.RotateLogs
+		if l.Conf.LogRotationCount > 0 {
+			fd, _ = rotatelogs.New(
+				l.Conf.LogFile+".%Y%m%d",
+				rotatelogs.WithLinkName(l.Conf.LogFile),
+				rotatelogs.WithMaxAge(time.Duration(l.Conf.LogMaxAge)*time.Second),
+				rotatelogs.WithRotationCount(l.Conf.LogRotationCount),
+			)
 		} else {
-			l.Info("记录文件异常, 采用默认标准错误输出", err)
+			if l.Conf.LogRotationTime == 0 {
+				l.Conf.LogRotationTime = 60 * 60 * 24
+			}
+			fd, _ = rotatelogs.New(
+				l.Conf.LogFile+".%Y%m%d",
+				rotatelogs.WithLinkName(l.Conf.LogFile),
+				rotatelogs.WithMaxAge(time.Duration(l.Conf.LogMaxAge)*time.Second),
+				rotatelogs.WithRotationTime(time.Duration(l.Conf.LogRotationTime)*time.Second),
+			)
 		}
+
+		l.logger.SetFormatter(&logrus.JSONFormatter{TimestampFormat: constant.DefaultTimestampFormat})
+		l.logger.SetOutput(fd)
 	}
 }
 
