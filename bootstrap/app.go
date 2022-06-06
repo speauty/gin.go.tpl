@@ -2,6 +2,7 @@ package bootstrap
 
 import (
 	"gin.go.tpl/lib"
+	"gin.go.tpl/lib/log"
 	"gin.go.tpl/middleware"
 	"gin.go.tpl/service"
 	"github.com/gin-gonic/gin"
@@ -19,6 +20,8 @@ type App struct {
 func (app *App) setGin() {
 	app.Engine = gin.Default()
 
+	app.Context.Log = log.LogAPI
+
 	// setMode by config from ini
 	if app.Context.Config.Gin.Mode != "" {
 		gin.SetMode(app.Context.Config.Gin.Mode)
@@ -26,7 +29,9 @@ func (app *App) setGin() {
 }
 
 func (app *App) setMiddleware() {
-	app.Engine.Use(middleware.CorsMiddleware{}.SetHeaders())
+	app.Engine.Use(
+		middleware.LogMiddleware{}.GoThrough(), middleware.CorsMiddleware{}.SetHeaders(),
+	)
 }
 
 func (app *App) Run() {

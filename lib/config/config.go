@@ -15,7 +15,8 @@ type GinConf struct {
 }
 
 type LogConf struct {
-	Level uint32 `mapstructure:"level"`
+	Level   uint32 `mapstructure:"level"`
+	LogFile string `mapstructure:"log_file"`
 }
 
 type ServerConf struct {
