@@ -47,6 +47,7 @@ type SSLConf struct {
 }
 
 type DatabaseConf struct {
+	IsMigration            bool      `mapstructure:"is_migration"`
 	DBDriver               string    `mapstructure:"db_driver"`
 	PrefixTable            string    `mapstructure:"prefix_table"`
 	SingularTable          bool      `mapstructure:"singular_table"`
