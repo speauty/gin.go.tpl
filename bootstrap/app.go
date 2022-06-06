@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"gin.go.tpl/lib"
 	"gin.go.tpl/middleware"
+	"gin.go.tpl/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,6 +36,11 @@ func (app *App) Run() {
 	app.Context = lib.NewContextAPI()
 	app.setGin()
 	app.setMiddleware()
+
+	err := service.MigratorService{}.SyncTables(app.Context)
+	if err != nil {
+		panic(err)
+	}
 
 	app.Server.StartServer(app.Context, app.Server.NewServer(app.Context, app.Engine))
 }

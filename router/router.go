@@ -10,6 +10,7 @@ type Router struct{}
 
 func (r Router) GetRouters(ctx *lib.Context, engine *gin.Engine) *gin.Engine {
 	router := engine
-	router.GET("/ping", ctx.Wrap(controller.Index{}.Get))
+	router.POST("/register", ctx.Wrap(controller.User{}.Register))
+	router.GET("/query", ctx.Wrap(controller.User{}.Query))
 	return router
 }

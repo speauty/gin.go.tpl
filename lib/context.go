@@ -37,7 +37,7 @@ func (ctx *Context) Init(iniDir string) {
 	ctx.Log = log.NewLogAPI(ctx.Config.Log)
 	ctx.Config.Database.MySql = ctx.Config.MySql
 	//@todo the MySql or PgSql config can't load at database node with viper, so using set
-	ctx.DB = db.NewDBAPI(ctx.Config.Database)
+	ctx.DB = db.NewDbApi(ctx.Config.Database)
 	ctx.Cache = cache.NewCacheAPI(ctx.Config.Redis)
 }
 

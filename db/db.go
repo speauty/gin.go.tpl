@@ -8,6 +8,18 @@ import (
 type DB struct {
 }
 
+func (d DB) GetApi() *db.DB {
+	return db.DBAPI
+}
+
 func (d DB) Get() *gorm.DB {
-	return db.DBAPI.GetDB()
+	return d.GetApi().GetDB()
+}
+
+func (d DB) GetConfigIsMigration() bool {
+	return d.GetApi().GetConfig().IsMigration
+}
+
+func (d DB) Create(value interface{}) error {
+	return d.Get().Create(value).Error
 }

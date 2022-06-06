@@ -22,7 +22,7 @@ type DB struct {
 	currentDriver string
 }
 
-func NewDBAPI(config config.DatabaseConf) *DB {
+func NewDbApi(config config.DatabaseConf) *DB {
 	DBOnce.Do(func() {
 		DBAPI = &DB{Config: config}
 		DBAPI.Init()
@@ -44,6 +44,10 @@ func (d *DB) GetDB() *gorm.DB {
 
 func (d DB) GetDriver() string {
 	return d.currentDriver
+}
+
+func (d DB) GetConfig() config.DatabaseConf {
+	return d.Config
 }
 
 func (d *DB) setConn() {

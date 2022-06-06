@@ -36,3 +36,7 @@ func (r *Response) Default() *Response {
 func (r *Response) RespByCode(code code.Code) *Response {
 	return &Response{Code: code, Msg: code.GetMsg(), Data: r.GetData()}
 }
+
+func (r *Response) RespByCodeAndMsg(code code.Code, msg string) *Response {
+	return &Response{Code: code, Msg: msg, Data: r.GetData()}
+}
