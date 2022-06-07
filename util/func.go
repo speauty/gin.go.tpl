@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 //WaitForExit 挂起
@@ -40,4 +41,11 @@ func GenRandomStr(length int) string {
 		outBytes[i] = alphaNumMap[(int(bytes[2*i])*256+int(bytes[2*i+1]))%(mapLen)]
 	}
 	return string(outBytes)
+}
+
+// LocalDateTime 本地化时间处理
+func LocalDateTime(date time.Time) time.Time {
+	// 格式化时间，由于Dao模型中，对应时间字段为time.Time，保持和实体对齐，所以这里暂且只本地化时间处理
+	// date.Local().Format(constant.DefaultTimestampFormat)
+	return date.Local()
 }
