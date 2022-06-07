@@ -8,7 +8,7 @@ import (
 
 type LogMiddleware struct{}
 
-func (lm LogMiddleware) GoThrough() gin.HandlerFunc {
+func (lm LogMiddleware) Exec() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 调整成异步处理
 		go func() {

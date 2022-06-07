@@ -27,12 +27,12 @@ func (app *App) setGin() {
 }
 
 func (app *App) setMiddleware() {
-	app.Engine.Use(middleware.RecoverMiddleware{}.Broken())
+	app.Engine.Use(middleware.RecoverMiddleware{}.Exec())
 	// 非发布模式, 使用日志中间件
 	if app.Context.Config.Gin.Mode != constant.GinModeRelease {
-		app.Engine.Use(middleware.LogMiddleware{}.GoThrough())
+		app.Engine.Use(middleware.LogMiddleware{}.Exec())
 	}
-	app.Engine.Use(middleware.CorsMiddleware{}.SetHeaders())
+	app.Engine.Use(middleware.CorsMiddleware{}.Exec(), middleware.LimiterMiddleware{}.Exec())
 }
 
 func (app *App) Run() {

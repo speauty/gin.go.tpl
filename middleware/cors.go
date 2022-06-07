@@ -7,7 +7,7 @@ import (
 
 type CorsMiddleware struct{}
 
-func (cm CorsMiddleware) SetHeaders() gin.HandlerFunc {
+func (cm CorsMiddleware) Exec() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if c.Request.Header.Get("Origin") != "" {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", c.Request.Header.Get("Origin"))
