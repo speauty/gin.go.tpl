@@ -7,12 +7,15 @@ import (
 	"gin.go.tpl/lib/errors"
 	"gin.go.tpl/util"
 	"gorm.io/gorm"
+	"time"
 )
 
 type UserDao struct {
-	Id       int64  `json:"id"`
-	Nickname string `json:"nickname"`
-	Passwd   string `json:"-"`
+	Id        int64     `json:"id"`
+	Nickname  string    `json:"nickname"`
+	Passwd    string    `json:"-"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (ud UserDao) NewModel() *gorm.DB {
@@ -27,6 +30,8 @@ func (ud UserDao) toUserEntity() *entity.User {
 func (ud *UserDao) fromUserEntity(user *entity.User) {
 	ud.Id = user.Id
 	ud.Nickname = user.Nickname
+	ud.CreatedAt = user.CreatedAt
+	ud.UpdatedAt = user.UpdatedAt
 }
 
 func (ud *UserDao) ReloadById() errors.Error {
