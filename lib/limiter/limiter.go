@@ -22,11 +22,11 @@ var GlobalLimiters = &Limiters{
 
 var once = sync.Once{}
 
-func NewLimiter(rateInterval rate.Limit, numAccessAllowed int, key string) *Limiter {
+func NewLimiter(rateInterval rate.Limit, tokenGenerated int, key string) *Limiter {
 	once.Do(func() {
 		go GlobalLimiters.clearLimiter()
 	})
-	keyLimiter := GlobalLimiters.getLimiter(rateInterval, numAccessAllowed, key)
+	keyLimiter := GlobalLimiters.getLimiter(rateInterval, tokenGenerated, key)
 	return keyLimiter
 
 }
@@ -37,14 +37,14 @@ func (l *Limiter) Allow() bool {
 
 }
 
-func (ls *Limiters) getLimiter(rateInterval rate.Limit, numAccessAllowed int, key string) *Limiter {
+func (ls *Limiters) getLimiter(rateInterval rate.Limit, tokenGenerated int, key string) *Limiter {
 	limiter, ok := ls.limiters.Load(key)
 	if ok {
 		return limiter.(*Limiter)
 	}
 
 	l := &Limiter{
-		limiter:   rate.NewLimiter(rateInterval, numAccessAllowed),
+		limiter:   rate.NewLimiter(rateInterval, tokenGenerated),
 		lastGetAt: time.Now(),
 		key:       key,
 	}

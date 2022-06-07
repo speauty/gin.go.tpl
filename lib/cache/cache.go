@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	CacheAPI  *Cache
+	CacheApi  *Cache
 	CacheOnce sync.Once
 )
 
@@ -16,11 +16,11 @@ type Cache struct {
 	Pool   *redis.Pool
 }
 
-func NewCacheAPI(config config.RedisConf) *Cache {
+func NewCacheApi(config config.RedisConf) *Cache {
 	CacheOnce.Do(func() {
-		CacheAPI = &Cache{config: config}
+		CacheApi = &Cache{config: config}
 	})
-	return CacheAPI
+	return CacheApi
 }
 
 func (c *Cache) initPool() {

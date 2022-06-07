@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	LogAPI  *Log
+	LogApi  *Log
 	LogOnce sync.Once
 )
 
@@ -19,12 +19,12 @@ type Log struct {
 	Conf   config.LogConf
 }
 
-func NewLogAPI(config config.LogConf) *Log {
+func NewLogApi(config config.LogConf) *Log {
 	LogOnce.Do(func() {
-		LogAPI = &Log{logrus.New(), config}
-		LogAPI.SetLogrus()
+		LogApi = &Log{logrus.New(), config}
+		LogApi.SetLogrus()
 	})
-	return LogAPI
+	return LogApi
 }
 
 func (l *Log) GetLogger() *logrus.Logger {

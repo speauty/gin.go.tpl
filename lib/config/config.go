@@ -4,7 +4,20 @@ import (
 	"fmt"
 	"gin.go.tpl/lib/constant"
 	"github.com/spf13/viper"
+	"sync"
 )
+
+var (
+	ConfigApi  *Config
+	ConfigOnce sync.Once
+)
+
+func NewConfigApi(path string) *Config {
+	ConfigOnce.Do(func() {
+		ConfigApi, _ = Config{}.LoadConfig(path)
+	})
+	return ConfigApi
+}
 
 type GlobalConf struct {
 	ENV string `mapstructure:"env"`
@@ -83,6 +96,11 @@ type RedisConf struct {
 	MaxActive int    `mapstructure:"max_active"`
 }
 
+type LimiterConf struct {
+	GeneratorInterval uint `mapstructure:"generator_interval"`
+	GeneratorNum      int  `mapstructure:"generator_num"`
+}
+
 type Config struct {
 	Global   GlobalConf   `mapstructure:"global"`
 	Gin      GinConf      `mapstructure:"gin"`
@@ -92,9 +110,12 @@ type Config struct {
 	PgSql    PgSqlConf    `mapstructure:"pgsql"`
 	MySql    MySqlConf    `mapstructure:"mysql"`
 	Redis    RedisConf    `mapstructure:"redis"`
+	Limiter  LimiterConf  `mapstructure:"limiter"`
 }
 
-func (Config) LoadConfig(path string) (config Config, err error) {
+func (Config) LoadConfig(path string) (config *Config, err error) {
+	config = &Config{}
+
 	viper.AddConfigPath(path)
 	viper.SetConfigType("ini")
 	viper.SetConfigName("app.global")
@@ -104,7 +125,7 @@ func (Config) LoadConfig(path string) (config Config, err error) {
 		panic(fmt.Errorf("当前配置加载失败, 错误: %v", err))
 	}
 
-	err = viper.Unmarshal(&config)
+	err = viper.Unmarshal(config)
 	if err != nil {
 		panic(fmt.Errorf("默认配置加载失败, 错误: %v", err))
 	}
@@ -116,9 +137,10 @@ func (Config) LoadConfig(path string) (config Config, err error) {
 	if err != nil {
 		panic(fmt.Errorf("%s配置加载失败, 错误: %v", config.Global.ENV, err))
 	}
-	err = viper.Unmarshal(&config)
+	err = viper.Unmarshal(config)
 	if err != nil {
 		panic(fmt.Errorf("%s配置加载失败, 错误: %v", config.Global.ENV, err))
 	}
+
 	return config, err
 }

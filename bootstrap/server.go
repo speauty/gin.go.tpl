@@ -11,7 +11,7 @@ type Server struct{}
 
 func (s Server) NewServer(ctx *lib.Context, engine *gin.Engine) *http.Server {
 	return &http.Server{
-		Addr:    lib.NewContextAPI().Config.Server.GetAddr(),
+		Addr:    lib.NewContextApi().Config.Server.GetAddr(),
 		Handler: router.Router{}.GetRouters(ctx, engine),
 	}
 }

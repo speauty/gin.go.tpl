@@ -9,7 +9,7 @@ type DB struct {
 }
 
 func (d DB) GetApi() *db.DB {
-	return db.DBAPI
+	return db.DBApi
 }
 
 func (d DB) Get() *gorm.DB {

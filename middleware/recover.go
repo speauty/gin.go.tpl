@@ -16,7 +16,7 @@ func (rm RecoverMiddleware) Exec() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if r := recover(); r != nil {
-				log.LogAPI.GetLogger().WithFields(logrus.Fields{
+				log.LogApi.GetLogger().WithFields(logrus.Fields{
 					"panic": r}).Error("panic.log")
 				// 打印错误堆栈信息
 				// debug.PrintStack()

@@ -12,7 +12,7 @@ func (lm LogMiddleware) Exec() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 调整成异步处理
 		go func() {
-			log.LogAPI.GetLogger().WithFields(logrus.Fields{
+			log.LogApi.GetLogger().WithFields(logrus.Fields{
 				"url": c.Request.RequestURI, "method": c.Request.Method,
 				"client": c.ClientIP(), "user-agent": c.Request.UserAgent(),
 				"referer": c.Request.Referer(), "host": c.Request.Host,

@@ -12,33 +12,30 @@ import (
 )
 
 var (
-	ContextAPI  *Context
+	ContextApi  *Context
 	ContextOnce sync.Once
 )
 
 type Context struct {
 	*gin.Context
-	Config config.Config
+	Config *config.Config
 	Log    *log.Log
 	DB     *db.DB
 	Cache  *cache.Cache
 }
 
-func NewContextAPI() *Context {
+func NewContextApi() *Context {
 	ContextOnce.Do(func() {
-		ContextAPI = &Context{}
-		ContextAPI.Config = config.Config{}
+		ContextApi = &Context{}
 	})
-	return ContextAPI
+	return ContextApi
 }
 
-func (ctx *Context) Init(iniDir string) {
-	ctx.Config, _ = ctx.Config.LoadConfig(iniDir)
-	ctx.Log = log.NewLogAPI(ctx.Config.Log)
-	ctx.Config.Database.MySql = ctx.Config.MySql
-	//@todo the MySql or PgSql config can't load at database node with viper, so using set
-	ctx.DB = db.NewDbApi(ctx.Config.Database)
-	ctx.Cache = cache.NewCacheAPI(ctx.Config.Redis)
+func (ctx *Context) Init() {
+	ctx.Config = config.ConfigApi
+	ctx.Log = log.LogApi
+	ctx.DB = db.DBApi
+	ctx.Cache = cache.CacheApi
 }
 
 func (ctx *Context) Wrap(handler func(*Context) *http.Response) gin.HandlerFunc {

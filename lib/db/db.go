@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	DBAPI  *DB
+	DBApi  *DB
 	DBOnce sync.Once
 )
 
@@ -24,10 +24,10 @@ type DB struct {
 
 func NewDbApi(config config.DatabaseConf) *DB {
 	DBOnce.Do(func() {
-		DBAPI = &DB{Config: config}
-		DBAPI.Init()
+		DBApi = &DB{Config: config}
+		DBApi.Init()
 	})
-	return DBAPI
+	return DBApi
 }
 
 func (d *DB) Init() {

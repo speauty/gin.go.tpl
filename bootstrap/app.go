@@ -2,7 +2,11 @@ package bootstrap
 
 import (
 	"gin.go.tpl/lib"
+	"gin.go.tpl/lib/cache"
+	"gin.go.tpl/lib/config"
 	"gin.go.tpl/lib/constant"
+	"gin.go.tpl/lib/db"
+	"gin.go.tpl/lib/log"
 	"gin.go.tpl/middleware"
 	"gin.go.tpl/service"
 	"github.com/gin-gonic/gin"
@@ -36,10 +40,20 @@ func (app *App) setMiddleware() {
 }
 
 func (app *App) Run() {
-	// 初始化上下文
-	lib.NewContextAPI().Init("./")
+	// 初始化 加载配置
+	config.NewConfigApi("./")
+	//@todo the MySql or PgSql config can't load at database node with viper, so using set
+	config.ConfigApi.Database.MySql = config.ConfigApi.MySql
 
-	app.Context = lib.NewContextAPI()
+	// 初始化 日志&数据库&缓存
+	log.NewLogApi(config.ConfigApi.Log)
+	db.NewDbApi(config.ConfigApi.Database)
+	cache.NewCacheApi(config.ConfigApi.Redis)
+
+	// 初始化 上下文
+	lib.NewContextApi().Init()
+
+	app.Context = lib.NewContextApi()
 	app.setGin()
 	app.setMiddleware()
 
