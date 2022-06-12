@@ -5,6 +5,7 @@ import (
 	"gin.go.tpl/lib/constant"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/sirupsen/logrus"
+	"runtime"
 	"sync"
 	"time"
 )
@@ -40,24 +41,25 @@ func (l Log) SetLogrus() {
 		ForceColors: true, FullTimestamp: true})
 	if l.Conf.LogFile != "" { // 如果日志文件非空, 将日志打到对应文件
 		var fd *rotatelogs.RotateLogs
-		if l.Conf.LogRotationCount > 0 {
-			fd, _ = rotatelogs.New(
-				l.Conf.LogFile+".%Y%m%d",
-				rotatelogs.WithLinkName(l.Conf.LogFile),
-				rotatelogs.WithMaxAge(time.Duration(l.Conf.LogMaxAge)*time.Second),
-				rotatelogs.WithRotationCount(l.Conf.LogRotationCount),
-			)
-		} else {
-			if l.Conf.LogRotationTime == 0 {
-				l.Conf.LogRotationTime = 60 * 60 * 24
-			}
-			fd, _ = rotatelogs.New(
-				l.Conf.LogFile+".%Y%m%d",
-				rotatelogs.WithLinkName(l.Conf.LogFile),
-				rotatelogs.WithMaxAge(time.Duration(l.Conf.LogMaxAge)*time.Second),
-				rotatelogs.WithRotationTime(time.Duration(l.Conf.LogRotationTime)*time.Second),
-			)
+		optLogFileFmt := l.Conf.LogFile + ".%Y%m%d"
+		optWithLinkName := rotatelogs.WithLinkName(l.Conf.LogFile)
+		optWithMaxAge := rotatelogs.WithMaxAge(time.Duration(l.Conf.LogMaxAge) * time.Second)
+		optWithRotationCount := rotatelogs.WithRotationCount(l.Conf.LogRotationCount)
+		if l.Conf.LogRotationTime == 0 {
+			l.Conf.LogRotationTime = 60 * 60 * 24
 		}
+		optWithRotationTime := rotatelogs.WithRotationTime(time.Duration(l.Conf.LogRotationTime) * time.Second)
+		var opts []rotatelogs.Option
+		if runtime.GOOS != constant.GOOSWindows {
+			opts = append(opts, optWithLinkName)
+		}
+		opts = append(opts, optWithMaxAge)
+		if l.Conf.LogRotationCount > 0 {
+			opts = append(opts, optWithRotationCount)
+		} else {
+			opts = append(opts, optWithRotationTime)
+		}
+		fd, _ = rotatelogs.New(optLogFileFmt, opts...)
 
 		l.logger.SetFormatter(&logrus.JSONFormatter{TimestampFormat: constant.DefaultTimestampFormat})
 		l.logger.SetOutput(fd)

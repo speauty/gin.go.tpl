@@ -1,6 +1,8 @@
 package constant
 
 const (
+	GOOSWindows string = "windows"
+
 	GinModeDebug   string = "debug"
 	GinModeTest    string = "test"
 	GinModeRelease string = "release"
