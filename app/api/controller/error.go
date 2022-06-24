@@ -1,15 +1,13 @@
 package controller
 
 import (
-	"gin.go.tpl/lib"
-	"gin.go.tpl/lib/errors"
-	"gin.go.tpl/lib/http"
+	"github.com/gin-gonic/gin"
 )
 
 type Error struct {
 	Base
 }
 
-func (e Error) NoRoute(ctx *lib.Context) *http.Response {
-	return e.Response(ctx, nil, errors.SysError{}.RouteNotFound())
+func (e Error) NoRoute(ctx *gin.Context) {
+	return
 }

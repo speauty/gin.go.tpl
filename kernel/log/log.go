@@ -1,8 +1,8 @@
 package log
 
 import (
-	"gin.go.tpl/lib/config"
-	"gin.go.tpl/lib/constant"
+	"gin.go.tpl/kernel/cfg"
+	"gin.go.tpl/kernel/constant"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/sirupsen/logrus"
 	"runtime"
@@ -11,21 +11,21 @@ import (
 )
 
 var (
-	LogApi  *Log
-	LogOnce sync.Once
+	api  *Log
+	once sync.Once
 )
 
 type Log struct {
 	logger *logrus.Logger
-	Conf   config.LogConf
+	cfg    *cfg.LogConf
 }
 
-func NewLogApi(config config.LogConf) *Log {
-	LogOnce.Do(func() {
-		LogApi = &Log{logrus.New(), config}
-		LogApi.SetLogrus()
+func NewLogApi(cfg *cfg.LogConf) *Log {
+	once.Do(func() {
+		api = &Log{logrus.New(), cfg}
+		api.SetLogrus()
 	})
-	return LogApi
+	return api
 }
 
 func (l *Log) GetLogger() *logrus.Logger {
@@ -33,28 +33,28 @@ func (l *Log) GetLogger() *logrus.Logger {
 }
 
 func (l Log) SetLogrus() {
-	if l.Conf.Level < 7 {
-		l.logger.SetLevel(logrus.Level(l.Conf.Level))
+	if l.cfg.Level < 7 {
+		l.logger.SetLevel(logrus.Level(l.cfg.Level))
 	}
 	l.logger.SetFormatter(&logrus.TextFormatter{
 		TimestampFormat: constant.DefaultTimestampFormat, DisableColors: false,
 		ForceColors: true, FullTimestamp: true})
-	if l.Conf.LogFile != "" { // 如果日志文件非空, 将日志打到对应文件
+	if l.cfg.LogFile != "" { // 如果日志文件非空, 将日志打到对应文件
 		var fd *rotatelogs.RotateLogs
-		optLogFileFmt := l.Conf.LogFile + ".%Y%m%d"
-		optWithLinkName := rotatelogs.WithLinkName(l.Conf.LogFile)
-		optWithMaxAge := rotatelogs.WithMaxAge(time.Duration(l.Conf.LogMaxAge) * time.Second)
-		optWithRotationCount := rotatelogs.WithRotationCount(l.Conf.LogRotationCount)
-		if l.Conf.LogRotationTime == 0 {
-			l.Conf.LogRotationTime = 60 * 60 * 24
+		optLogFileFmt := l.cfg.LogFile + ".%Y%m%d"
+		optWithLinkName := rotatelogs.WithLinkName(l.cfg.LogFile)
+		optWithMaxAge := rotatelogs.WithMaxAge(time.Duration(l.cfg.LogMaxAge) * time.Second)
+		optWithRotationCount := rotatelogs.WithRotationCount(l.cfg.LogRotationCount)
+		if l.cfg.LogRotationTime == 0 {
+			l.cfg.LogRotationTime = 60 * 60 * 24
 		}
-		optWithRotationTime := rotatelogs.WithRotationTime(time.Duration(l.Conf.LogRotationTime) * time.Second)
+		optWithRotationTime := rotatelogs.WithRotationTime(time.Duration(l.cfg.LogRotationTime) * time.Second)
 		var opts []rotatelogs.Option
 		if runtime.GOOS != constant.GOOSWindows {
 			opts = append(opts, optWithLinkName)
 		}
 		opts = append(opts, optWithMaxAge)
-		if l.Conf.LogRotationCount > 0 {
+		if l.cfg.LogRotationCount > 0 {
 			opts = append(opts, optWithRotationCount)
 		} else {
 			opts = append(opts, optWithRotationTime)

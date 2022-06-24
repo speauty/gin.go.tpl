@@ -1,11 +1,9 @@
 package controller
 
 import (
-	"gin.go.tpl/db/dao"
-	"gin.go.tpl/lib"
-	"gin.go.tpl/lib/code"
-	"gin.go.tpl/lib/http"
-	"gin.go.tpl/service"
+	"gin.go.tpl/kernel/code"
+	"gin.go.tpl/kernel/response"
+	"github.com/gin-gonic/gin"
 )
 
 type User struct {
@@ -17,29 +15,16 @@ type userRegisterInput struct {
 	Passwd   string `json:"passwd" binding:"required"`
 }
 
-func (u User) Register(ctx *lib.Context) *http.Response {
-	inputs := &userRegisterInput{}
-	if err := u.Input(ctx, inputs); err != nil {
-		return u.Response(ctx, (&http.Response{}).RespByCode(code.StdInput), err)
-	}
-	if err := (service.UserService{}).Register(ctx, &dao.UserDao{Nickname: inputs.Nickname, Passwd: inputs.Passwd}); err != nil {
-		return u.Response(ctx, nil, err)
-	}
-	return u.Response(ctx, nil, nil)
+func (u User) Register(ctx *gin.Context) {
+	response.Resp().SetCode(code.StdRequestRateExceed).(response.IResponse).SetMsg("测试一下").(response.IResponse).Json(ctx)
+	//resp.Resp(ctx)
+	return
 }
 
 type userQueryInput struct {
 	Id int64 `form:"id" binding:"required"`
 }
 
-func (u User) Query(ctx *lib.Context) *http.Response {
-	inputs := &userQueryInput{}
-	if err := u.Input(ctx, inputs); err != nil {
-		return u.Response(ctx, (&http.Response{}).RespByCode(code.StdInput), err)
-	}
-	userDao := &dao.UserDao{Id: inputs.Id}
-	if err := (service.UserService{}).Query(ctx, userDao); err != nil {
-		return u.Response(ctx, nil, err)
-	}
-	return u.Response(ctx, (&http.Response{Data: userDao}).RespByCode(code.StdOk), nil)
+func (u User) Query(ctx *gin.Context) {
+
 }

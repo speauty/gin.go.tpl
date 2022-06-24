@@ -1,6 +1,6 @@
 package errors
 
-import "gin.go.tpl/lib/code"
+import "gin.go.tpl/kernel/code"
 
 type SysError struct {
 	BaseError

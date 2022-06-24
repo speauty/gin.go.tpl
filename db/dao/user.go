@@ -3,8 +3,8 @@ package dao
 import (
 	"gin.go.tpl/db"
 	"gin.go.tpl/db/entity"
-	"gin.go.tpl/lib/code"
-	"gin.go.tpl/lib/errors"
+	"gin.go.tpl/kernel/code"
+	"gin.go.tpl/kernel/errors"
 	"gin.go.tpl/util"
 	"gorm.io/gorm"
 	"time"

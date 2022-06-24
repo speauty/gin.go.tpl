@@ -3,12 +3,12 @@ package service
 import (
 	"gin.go.tpl/db"
 	"gin.go.tpl/db/entity"
-	"gin.go.tpl/lib"
+	"gin.go.tpl/kernel/log"
 )
 
 type MigratorService struct{}
 
-func (ms MigratorService) SyncTables(ctx *lib.Context) error {
+func (ms MigratorService) SyncTables() error {
 	tmpDb := db.DB{}
 	if tmpDb.GetConfigIsMigration() {
 		err := tmpDb.Get().Set("gorm:table_options", "ENGINE=InnoDB").
@@ -16,7 +16,7 @@ func (ms MigratorService) SyncTables(ctx *lib.Context) error {
 				&entity.User{},
 			)
 		if err != nil {
-			ctx.Log.Error(err)
+			log.NewLogApi(nil).Error(err)
 			return err
 		}
 	}

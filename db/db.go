@@ -1,23 +1,23 @@
 package db
 
 import (
-	"gin.go.tpl/lib/db"
+	"gin.go.tpl/kernel/db"
 	"gorm.io/gorm"
 )
 
 type DB struct {
 }
 
-func (d DB) GetApi() *db.DB {
-	return db.DBApi
+func (d DB) GetApi() *db.Db {
+	return db.NewDbApi(nil)
 }
 
 func (d DB) Get() *gorm.DB {
-	return d.GetApi().GetDB()
+	return d.GetApi().GetDb()
 }
 
 func (d DB) GetConfigIsMigration() bool {
-	return d.GetApi().GetConfig().IsMigration
+	return d.GetApi().GetCfg().IsMigration
 }
 
 func (d DB) Create(value interface{}) error {

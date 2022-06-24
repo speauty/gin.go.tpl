@@ -1,22 +1,22 @@
-package config
+package cfg
 
 import (
 	"fmt"
-	"gin.go.tpl/lib/constant"
+	"gin.go.tpl/kernel/constant"
 	"github.com/spf13/viper"
 	"sync"
 )
 
 var (
-	ConfigApi  *Config
-	ConfigOnce sync.Once
+	api  *Cfg
+	once sync.Once
 )
 
-func NewConfigApi(path string) *Config {
-	ConfigOnce.Do(func() {
-		ConfigApi, _ = Config{}.LoadConfig(path)
+func NewCfgApi(path string) *Cfg {
+	once.Do(func() {
+		api, _ = Cfg{}.LoadConfig(path)
 	})
-	return ConfigApi
+	return api
 }
 
 type GlobalConf struct {
@@ -101,7 +101,7 @@ type LimiterConf struct {
 	GeneratorNum      int  `mapstructure:"generator_num"`
 }
 
-type Config struct {
+type Cfg struct {
 	Global   GlobalConf   `mapstructure:"global"`
 	Gin      GinConf      `mapstructure:"gin"`
 	Log      LogConf      `mapstructure:"log"`
@@ -113,8 +113,8 @@ type Config struct {
 	Limiter  LimiterConf  `mapstructure:"limiter"`
 }
 
-func (Config) LoadConfig(path string) (config *Config, err error) {
-	config = &Config{}
+func (Cfg) LoadConfig(path string) (config *Cfg, err error) {
+	config = &Cfg{}
 
 	viper.AddConfigPath(path)
 	viper.SetConfigType("ini")
