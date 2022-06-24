@@ -16,7 +16,7 @@ type userRegisterInput struct {
 }
 
 func (u User) Register(ctx *gin.Context) {
-	response.Resp().SetCode(code.StdRequestRateExceed).(response.IResponse).SetMsg("测试一下").(response.IResponse).Json(ctx)
+	response.New().SetCode(code.StdRequestRateExceed).SetMsg("测试一下").Json(ctx)
 	//resp.Resp(ctx)
 	return
 }
