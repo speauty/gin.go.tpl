@@ -32,7 +32,7 @@ func (l *Log) GetLogger() *logrus.Logger {
 	return l.logger
 }
 
-func (l Log) SetLogrus() {
+func (l *Log) SetLogrus() {
 	if l.cfg.Level < 7 {
 		l.logger.SetLevel(logrus.Level(l.cfg.Level))
 	}
@@ -66,34 +66,34 @@ func (l Log) SetLogrus() {
 	}
 }
 
-func (l Log) Print(args ...interface{}) {
+func (l *Log) Print(args ...interface{}) {
 	l.logger.Println(args)
 }
 
-func (l Log) Trace(args ...interface{}) {
+func (l *Log) Trace(args ...interface{}) {
 	l.logger.Traceln(args)
 }
 
-func (l Log) Debug(args ...interface{}) {
+func (l *Log) Debug(args ...interface{}) {
 	l.logger.Debugln(args)
 }
 
-func (l Log) Info(args ...interface{}) {
+func (l *Log) Info(args ...interface{}) {
 	l.logger.Infoln(args)
 }
 
-func (l Log) Warn(args ...interface{}) {
+func (l *Log) Warn(args ...interface{}) {
 	l.logger.Warnln(args)
 }
 
-func (l Log) Error(args ...interface{}) {
+func (l *Log) Error(args ...interface{}) {
 	l.logger.Errorln(args)
 }
 
-func (l Log) Fatal(args ...interface{}) {
+func (l *Log) Fatal(args ...interface{}) {
 	l.logger.Fatalln(args)
 }
 
-func (l Log) Panic(args ...interface{}) {
+func (l *Log) Panic(args ...interface{}) {
 	logrus.Panicln(args)
 }
