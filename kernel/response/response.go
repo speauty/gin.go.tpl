@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-// New 生成新响应结构体
+// New 生成新响应结构体 尽量调用该函数获取响应结构体, 相当于快捷方式之类的?
 func New() IResponse {
 	return &Response{}
 }
@@ -34,6 +34,10 @@ type IResponse interface {
 	WithError(argCode code.Code, err error) IResponse
 	// Json Json响应类型
 	Json(ctx *gin.Context)
+	// JsonP JsonP响应类型(感觉和Json没啥差别呢)
+	JsonP(ctx *gin.Context)
+	// Xml Xml响应类型
+	Xml(ctx *gin.Context)
 }
 
 type Response struct {
@@ -42,15 +46,15 @@ type Response struct {
 	Data interface{} `json:"d"`
 }
 
-func (r Response) GetCode() code.Code {
+func (r *Response) GetCode() code.Code {
 	return r.Code
 }
 
-func (r Response) GetMsg() string {
+func (r *Response) GetMsg() string {
 	return r.Msg
 }
 
-func (r Response) GetData() interface{} {
+func (r *Response) GetData() interface{} {
 	return r.Data
 }
 
@@ -88,6 +92,7 @@ func (r *Response) WithCodeAndMsg(argCode code.Code, msg string) IResponse {
 }
 
 func (r *Response) WithError(argCode code.Code, err error) IResponse {
+	//@todo should hook error inside this func or wrapping this response handle, like in the base controller
 	if argCode == 0 {
 		argCode = code.StdErr
 	}
@@ -98,9 +103,25 @@ func (r *Response) WithError(argCode code.Code, err error) IResponse {
 }
 
 func (r *Response) Json(ctx *gin.Context) {
+	r.fillMsgWithCode()
+	ctx.JSON(http.StatusOK, r)
+	return
+}
+
+func (r *Response) JsonP(ctx *gin.Context) {
+	r.fillMsgWithCode()
+	ctx.JSONP(http.StatusOK, r)
+	return
+}
+
+func (r *Response) Xml(ctx *gin.Context) {
+	r.fillMsgWithCode()
+	ctx.XML(http.StatusOK, r)
+	return
+}
+
+func (r *Response) fillMsgWithCode() {
 	if r.GetMsg() == "" {
 		r.SetMsg(r.GetCode().GetMsg())
 	}
-	ctx.JSON(http.StatusOK, r)
-	return
 }
