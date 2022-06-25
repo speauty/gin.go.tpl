@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"gin.go.tpl/kernel/code"
 	"gin.go.tpl/kernel/errors"
 	"gin.go.tpl/kernel/log"
 	"gin.go.tpl/kernel/response"
@@ -10,18 +11,20 @@ import (
 type Base struct {
 }
 
-// Input to receive input from client
-func (c *Base) Input(ctx *gin.Context, obj interface{}) errors.Error {
+func (controller Base) Input(ctx *gin.Context, obj interface{}) errors.IError {
 	if err := ctx.ShouldBind(obj); err != nil {
-		return errors.BaseError{}.GenFromStdError(err)
+		return errors.Core().NewFromCode(code.StdInput, err)
 	}
 	return nil
 }
 
-func (c *Base) Response(ctx *gin.Context, resp *response.Response, err errors.Error) *response.Response {
+func (controller Base) Response(ctx *gin.Context, resp response.IResponse, err errors.IError) {
 	if err != nil {
 		log.NewLogApi(nil).Error(err.Error())
-		return nil
+		resp.WithIError(err)
+	} else {
+		resp.WithCode(code.StdOk)
 	}
-	return resp
+	resp.Json(ctx)
+	return
 }

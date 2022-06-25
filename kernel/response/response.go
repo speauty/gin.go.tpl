@@ -2,6 +2,7 @@ package response
 
 import (
 	"gin.go.tpl/kernel/code"
+	"gin.go.tpl/kernel/errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -30,8 +31,8 @@ type IResponse interface {
 	WithCode(argCode code.Code) IResponse
 	// WithCodeAndMsg 根据代码和提示生成响应
 	WithCodeAndMsg(argCode code.Code, msg string) IResponse
-	// WithError 根据错误生成响应
-	WithError(argCode code.Code, err error) IResponse
+	// WithIError 根据IError生成响应
+	WithIError(err errors.IError) IResponse
 	// Json Json响应类型
 	Json(ctx *gin.Context)
 	// JsonP JsonP响应类型(感觉和Json没啥差别呢)
@@ -91,13 +92,9 @@ func (r *Response) WithCodeAndMsg(argCode code.Code, msg string) IResponse {
 	return r
 }
 
-func (r *Response) WithError(argCode code.Code, err error) IResponse {
-	//@todo should hook error inside this func or wrapping this response handle, like in the base controller
-	if argCode == 0 {
-		argCode = code.StdErr
-	}
-	r.SetCode(argCode)
-	r.SetMsg(err.Error())
+func (r *Response) WithIError(err errors.IError) IResponse {
+	r.SetCode(err.GetCode())
+	r.SetMsg(err.GetMsg())
 	r.SetData(r.GetData())
 	return r
 }
@@ -122,6 +119,13 @@ func (r *Response) Xml(ctx *gin.Context) {
 
 func (r *Response) fillMsgWithCode() {
 	if r.GetMsg() == "" {
-		r.SetMsg(r.GetCode().GetMsg())
+		r.SetMsg(r.GetCode().Trans())
 	}
+}
+
+func (r *Response) flush() {
+	r.SetCode(0)
+	r.SetMsg("")
+	r.SetData(nil)
+	return
 }

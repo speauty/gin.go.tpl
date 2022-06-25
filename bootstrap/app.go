@@ -34,7 +34,9 @@ func (app *App) setMiddleware() {
 	if cfg.NewCfgApi("").Gin.Mode != constant.GinModeRelease {
 		app.Engine.Use(middleware.LogMiddleware{}.Exec())
 	}
-	app.Engine.Use(middleware.CorsMiddleware{}.Exec(), middleware.LimiterMiddleware{}.Exec())
+	app.Engine.Use(
+		middleware.CorsMiddleware{}.Exec(), middleware.LimiterMiddleware{}.Exec(),
+	)
 }
 
 func (app *App) Run() {

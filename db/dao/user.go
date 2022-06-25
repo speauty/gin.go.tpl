@@ -3,7 +3,6 @@ package dao
 import (
 	"gin.go.tpl/db"
 	"gin.go.tpl/db/entity"
-	"gin.go.tpl/kernel/code"
 	"gin.go.tpl/kernel/errors"
 	"gin.go.tpl/util"
 	"gorm.io/gorm"
@@ -34,30 +33,26 @@ func (ud *UserDao) fromUserEntity(user *entity.User) {
 	ud.UpdatedAt = user.UpdatedAt
 }
 
-func (ud *UserDao) ReloadById() errors.Error {
+func (ud *UserDao) ReloadById() errors.IError {
 	user := &entity.User{}
 	if ud.Id == 0 {
-		return errors.LogicError{}.GenFromCode(code.StdParam, nil)
 	}
 	if err := ud.NewModel().Where("id = ?", ud.Id).First(user).Error; err != nil {
-		return errors.LogicError{}.NotFound(err)
 	}
 	ud.fromUserEntity(user)
 	return nil
 }
 
-func (ud UserDao) CreateUser() errors.Error {
+func (ud UserDao) CreateUser() errors.IError {
 	if err := (db.DB{}).Create(ud.toUserEntity()); err != nil {
-		return errors.LogicError{}.GenFromStdError(err)
 	}
 	return nil
 }
 
-func (ud UserDao) UniqueUser() errors.Error {
+func (ud UserDao) UniqueUser() errors.IError {
 	count := int64(0)
 	ud.NewModel().Where("nickname = ?", ud.Nickname).Count(&count)
 	if count > 0 {
-		return errors.LogicError{}.Unique(nil)
 	}
 	return nil
 }

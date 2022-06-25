@@ -8,13 +8,13 @@ import (
 
 type UserService struct{}
 
-func (us UserService) Register(_ *gin.Context, userDao *dao.UserDao) errors.Error {
+func (us UserService) Register(_ *gin.Context, userDao *dao.UserDao) errors.IError {
 	if err := userDao.UniqueUser(); err != nil {
 		return err
 	}
 	return userDao.CreateUser()
 }
 
-func (us UserService) Query(_ *gin.Context, userDao *dao.UserDao) errors.Error {
+func (us UserService) Query(_ *gin.Context, userDao *dao.UserDao) errors.IError {
 	return userDao.ReloadById()
 }

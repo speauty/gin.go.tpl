@@ -5,18 +5,20 @@ import "fmt"
 type Code int
 
 const (
-	StdOk                Code = 0
+	StdOk Code = 200
+
 	StdErr               Code = 10000
 	StdRouteNotFound     Code = 10001
 	StdRequestRateExceed Code = 10002
 	StdInput             Code = 10010
 	StdParam             Code = 10020
-	StdDb                Code = 10030
-	StdDbQuery           Code = 10031
-	StdDbUpdate          Code = 10032
-	StdDbDelete          Code = 10033
-	StdDbUnique          Code = 10034
-	StdDbNotFound        Code = 10035
+
+	StdDb         Code = 10030
+	StdDbQuery    Code = 10031
+	StdDbUpdate   Code = 10032
+	StdDbDelete   Code = 10033
+	StdDbUnique   Code = 10034
+	StdDbNotFound Code = 10035
 )
 
 var codeMsg = map[Code]string{
@@ -34,7 +36,7 @@ var codeMsg = map[Code]string{
 	StdDbNotFound:        "当前数据不存在",
 }
 
-func (code Code) GetMsg() string {
+func (code Code) Trans() string {
 	if _, ok := codeMsg[code]; !ok {
 		return fmt.Sprintf("当前编码[%d]未设置, 请及时修复", code)
 	}
