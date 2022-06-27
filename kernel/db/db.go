@@ -28,7 +28,6 @@ type IDb interface {
 	GetDriver() string
 	GetCfg() *cfg.DatabaseConf
 	GetDb() *gorm.DB
-	//Create(newEntity interface{}) error
 	init()
 }
 
@@ -38,11 +37,11 @@ type Db struct {
 	currentDriver string
 }
 
-func (d Db) GetDriver() string {
+func (d *Db) GetDriver() string {
 	return d.currentDriver
 }
 
-func (d Db) GetCfg() *cfg.DatabaseConf {
+func (d *Db) GetCfg() *cfg.DatabaseConf {
 	return d.cfg
 }
 
@@ -76,7 +75,7 @@ func (d *Db) setConn() {
 	}
 }
 
-func (d Db) setPool() {
+func (d *Db) setPool() {
 	if d.cfg.IsPool > 0 {
 		sqlDB, _ := d.GetDb().DB()
 		sqlDB.SetMaxIdleConns(d.cfg.MaxIdleConn)
@@ -85,7 +84,7 @@ func (d Db) setPool() {
 	}
 }
 
-func (d Db) getOption() *gorm.Config {
+func (d *Db) getOption() *gorm.Config {
 	gormConfig := &gorm.Config{}
 	// to disable default transaction
 	gormConfig.SkipDefaultTransaction = d.cfg.SkipDefaultTransaction

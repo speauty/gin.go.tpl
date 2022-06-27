@@ -88,12 +88,10 @@ type MySqlConf struct {
 }
 
 type RedisConf struct {
-	Host      string `mapstructure:"host"`
-	Port      string `mapstructure:"port"`
-	Auth      string `mapstructure:"auth"`
-	DB        string `mapstructure:"db"`
-	MaxIdle   int    `mapstructure:"max_idle"`
-	MaxActive int    `mapstructure:"max_active"`
+	Host string `mapstructure:"host"`
+	Port string `mapstructure:"port"`
+	Auth string `mapstructure:"auth"`
+	DB   int    `mapstructure:"db"`
 }
 
 type LimiterConf struct {
