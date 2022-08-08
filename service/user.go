@@ -9,7 +9,7 @@ import (
 type UserService struct{}
 
 func (us UserService) Register(_ *gin.Context, userDao *dao.UserDao) errors.IError {
-	if err := userDao.UniqueUser(); err != nil {
+	if err := userDao.Unique(); err != nil {
 		return err
 	}
 	return userDao.CreateUser()

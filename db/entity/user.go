@@ -7,7 +7,7 @@ import (
 )
 
 type User struct {
-	Id                   int64  `gorm:"<-:create;type:int8;primaryKey;comment:主键"`
+	db.IdModule          `gorm:"embedded"`
 	Nickname             string `gorm:"type:varchar(64);not null;comment:昵称"`
 	Passwd               string `gorm:"type:varchar(64);not null;comment:密码"`
 	Salt                 string `gorm:"type:varchar(64);not null;comment:盐"`

@@ -2,6 +2,10 @@ package db
 
 import "time"
 
+type IdModule struct {
+	Id int64 `gorm:"<-:create;type:int8;primaryKey;comment:主键"`
+}
+
 // TimeModule time-module
 type TimeModule struct {
 	CreatedAt time.Time `json:"created_at" gorm:"column:created_at;comment:创建时间"`
