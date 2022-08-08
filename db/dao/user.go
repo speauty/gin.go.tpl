@@ -11,48 +11,60 @@ import (
 )
 
 type UserDao struct {
-	Id        int64     `json:"id"`
-	Nickname  string    `json:"nickname"`
-	Passwd    string    `json:"-"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	BaseDao
+	Id        int64      `json:"id"`
+	Nickname  string     `json:"nickname"`
+	Passwd    string     `json:"-"`
+	CreatedAt *time.Time `json:"created_at"`
+	UpdatedAt *time.Time `json:"updated_at"`
 }
 
-func (ud *UserDao) NewModel() *gorm.DB {
-	return db.DB{}.Get().Model(&entity.User{})
+func (d *UserDao) newDao() interface{} { return &UserDao{} }
+
+func (d *UserDao) getModel(tx *gorm.DB, loadNewEntity bool) *gorm.DB {
+	if tx == nil {
+		tx = db.DB{}.Get()
+	}
+	model := d.toEntity()
+	if loadNewEntity {
+		model = d.getEntity(false)
+	}
+	return tx.Model(model)
 }
 
-func (ud *UserDao) toEntity() *entity.User {
-	newPasswd, salt := util.GenStrEncodedAndSalt(&ud.Passwd)
-	return &entity.User{Nickname: ud.Nickname, Passwd: newPasswd, Salt: salt}
+func (d *UserDao) getEntity(isSlice bool) interface{} {
+	if isSlice {
+		return []*entity.User{}
+	} else {
+		return &entity.User{}
+	}
 }
 
-func (ud *UserDao) fromEntity(user *entity.User) {
-	ud.Id = user.Id
-	ud.Nickname = user.Nickname
-	ud.CreatedAt = user.CreatedAt
-	ud.UpdatedAt = user.UpdatedAt
+func (d *UserDao) toEntity() interface{} {
+	newPasswd, salt := util.GenStrEncodedAndSalt(&d.Passwd)
+	return &entity.User{Nickname: d.Nickname, Passwd: newPasswd, Salt: salt}
 }
 
-func (ud *UserDao) ReloadById() errors.IError {
+func (d *UserDao) fromEntity(data interface{}) {
+	d.Id = data.(*UserDao).Id
+	d.Nickname = data.(*UserDao).Nickname
+	d.CreatedAt = data.(*UserDao).CreatedAt
+	d.UpdatedAt = data.(*UserDao).UpdatedAt
+}
+
+func (d *UserDao) ReloadById() errors.IError {
 	user := &entity.User{}
-	if ud.Id == 0 {
+	if d.Id == 0 {
 	}
-	if err := ud.NewModel().Where("id = ?", ud.Id).First(user).Error; err != nil {
+	if err := d.getModel(nil, true).Where("id = ?", d.Id).First(user).Error; err != nil {
 	}
-	ud.fromEntity(user)
+	d.fromEntity(user)
 	return nil
 }
 
-func (ud *UserDao) CreateUser() errors.IError {
-	if err := (db.DB{}).Create(ud.toEntity()); err != nil {
-	}
-	return nil
-}
-
-func (ud *UserDao) Unique() errors.IError {
+func (d *UserDao) Unique() errors.IError {
 	count := int64(0)
-	ud.NewModel().Where("nickname = ?", ud.Nickname).Count(&count)
+	d.getModel(nil, true).Where("nickname = ?", d.Nickname).Count(&count)
 	if count > 0 {
 		return errors.Logic().NewFromCode(code.StdDbUnique, nil)
 	}

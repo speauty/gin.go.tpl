@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"os"
 	"os/signal"
+	"reflect"
 	"syscall"
 	"time"
 )
@@ -44,8 +45,24 @@ func GenRandomStr(length int) string {
 }
 
 // LocalDateTime 本地化时间处理
-func LocalDateTime(date time.Time) time.Time {
+func LocalDateTime(date *time.Time) *time.Time {
 	// 格式化时间，由于Dao模型中，对应时间字段为time.Time，保持和实体对齐，所以这里暂且只本地化时间处理
 	// date.Local().Format(constant.DefaultTimestampFormat)
-	return date.Local()
+	newTime := date.Local()
+	return &newTime
+}
+
+func ToSlice(arr interface{}) []interface{} {
+	res := make([]interface{}, 0)
+	v := reflect.ValueOf(arr)
+
+	if v.Kind() != reflect.Slice {
+		res = append(res, arr)
+		return res
+	}
+	l := v.Len()
+	for i := 0; i < l; i++ {
+		res = append(res, v.Index(i).Interface())
+	}
+	return res
 }

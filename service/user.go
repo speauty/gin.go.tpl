@@ -12,7 +12,7 @@ func (us UserService) Register(_ *gin.Context, userDao *dao.UserDao) errors.IErr
 	if err := userDao.Unique(); err != nil {
 		return err
 	}
-	return userDao.CreateUser()
+	return userDao.DaoCreateNoScope(nil, userDao)
 }
 
 func (us UserService) Query(_ *gin.Context, userDao *dao.UserDao) errors.IError {
