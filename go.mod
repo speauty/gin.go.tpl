@@ -5,8 +5,7 @@ go 1.16
 require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-playground/validator/v10 v10.10.1 // indirect
-	github.com/go-redis/redis/v8 v8.11.5 // indirect
-	github.com/gomodule/redigo v1.8.8
+	github.com/go-redis/redis/v8 v8.11.5
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jonboulle/clockwork v0.3.0 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
