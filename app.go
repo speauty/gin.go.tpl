@@ -1,7 +1,7 @@
 package main
 
-import "gin.go.tpl/bootstrap"
+import "fmt"
 
 func main() {
-	(&bootstrap.App{}).Run()
+	fmt.Println("refactor")
 }
